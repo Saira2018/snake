@@ -1,0 +1,27 @@
+
+var appleX;
+var appleY;
+var appleRadius = 10;
+
+function getRndInteger(min, max){
+	return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+
+function drawApple () {
+	//draw apple on the screen 
+	ctx.beginPath();
+	ctx.arc(appleX, appleY, appleRadius, 0, Math.PI*2, true); //x, y, width, height
+	ctx.fillStyle = "red";
+	ctx.fill();
+	ctx.closePath();
+}
+
+function randomApplePos () {
+	appleX = getRndInteger(appleRadius,canvasWidth-appleRadius);
+	appleY = getRndInteger(appleRadius,canvasHeight-appleRadius);
+	//drawApple();
+}
+
+//randomApplePos(); 
+
