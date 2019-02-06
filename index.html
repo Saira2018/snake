@@ -3,92 +3,10 @@
 <head>
 <meta charset="utf-8">
 <title>Snake Game</title>
-	<style>
-		* {
-			padding:0; 
-			margin:0;
-		}
-		
-		canvas {
-			background: green;
-			display: block;
-			margin: 0 auto;
-		}
-			
-	</style>
+<link href="css/styles.css" rel="stylesheet" type="text/css">
 </head>
-
 <body>
-
 	<canvas id="gameCanvas" width="480" height="320"></canvas>	
-	
-	<script>
-		var canvas = document.getElementById("gameCanvas");
-		var ctx = canvas.getContext("2d");
-		
-		var canvasHeight = canvas.height;
-		var canvasWidth = canvas.width;
-		
-		var snakeWidth = 10;
-		var snakeHeight = 10;
-		
-		var snakeX = canvas.width/2;
-		var snakeY = canvas.height-100;
-
-		var dx = 10;
-		var dy = -10;
-		
-		document.addEventListener('keydown', moveSnake, true);
-		
-		function moveSnake(e) {
-			
-			if(e.keyCode == 37) {
-				console.log("left key pressed");
-				snakeX -= dx;
-				//dx = -dx;
-			}
-			
-			if(e.keyCode == 38){
-				console.log("up key pressed");
-				snakeY += dy;
-			}
-			if(e.keyCode == 39) {
-				console.log("right key pressed");
-				snakeX += dx;
-			}			
-			if(e.keyCode == 40) {
-				console.log("down key pressed");
-				snakeY -= dy;
-			}		
-
-		}
-		
-		function startMove() {
-			snakeY += dy;
-			//snakeY += snakeY;
-		}
-		
-		function drawSnake(){
-			//draw start of snake
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			ctx.beginPath();
-			ctx.rect(snakeX, snakeY, snakeWidth, snakeHeight);
-			ctx.fillStyle = "yellow";
-			ctx.fill();
-			ctx.closePath();
-			
-			startMove();
-			
-			if(snakeY + dy < 0) {
-				document.removeEventListener('keydown', moveSnake, true);
-				alert("snake hit the top. Restart the game");
-				document.location.reload();		
-			}
-		}
-		
-		var interval = setInterval(drawSnake, 200);
-	
-
-	</script>
+	<script src="scripts/main.js"></script>
 </body>
 </html>
