@@ -15,7 +15,26 @@ var snakeDirection = 'NORTH';
 var dx = 10;
 var dy = -10;
 
+var foodX;
+var foodY;
+var foodSize = 10;
+
+var aspectRatio = (canvas.width/canvas.height);
+var dbWidth = 250;
+var dbHeight = (dbWidth/aspectRatio);
+
+
+var score = 0;
+
+var interval = setInterval(drawSnake, 200);
 document.addEventListener('keydown', moveSnake, true);
+
+function restartGame(e){
+	if(e.keyCode == 82 ){
+		//reload page
+		document.location.reload();
+	}
+}
 
 function moveSnake(e) {
 
@@ -62,46 +81,89 @@ function drawSnake(){
 	ctx.fillStyle = "yellow";
 	ctx.fill();
 	ctx.closePath();
-
-	startMove();
 	
+	startMove();
+	drawFood();
 	collisionDetection();
-
-
+	
 }
 
-function collisionDetection() {
-	//collision detection
-	if(snakeY + dy < 0 || snakeY + dy > canvas.height || snakeX + dx < 0 || snakeX + dx > canvas.width) { 
-		
-		document.removeEventListener('keydown', moveSnake, true);
-		//document.write("collision Detected: "+snakeDirection);
-		clearInterval(interval);
 
+
+
+function collisionDetection() {
+	if(snakeY + dy < 0 || snakeY + dy > canvas.height || snakeX + dx < 0 || snakeX + dx > canvas.width) { 
+		document.removeEventListener('keydown', moveSnake, true);
+		clearInterval(interval);
 		gameOver();
+	}
+	
+	if(snakeY == foodY && snakeX == foodX){
+		score++;
+		randomFoodPos();
+		
 	}
 }
 
-var aspectRatio = (canvas.width/canvas.height);
-var dbWidth = 250;
-var dbHeight = (dbWidth/aspectRatio);
-
-console.log(aspectRatio);
-console.log(dbHeight);
-
 function gameOver() {
-	var txt = "Game Over";
-	var txtWidth = ctx.measureText(txt);
-	
+	var txtArr = ["Game Over!", "Press the r key to restart.","You managed to eat "+score+" apples."];
+	var lineHeight = 18;
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	ctx.rect((canvas.width-dbWidth)/2, (canvas.height-dbHeight)/2, dbWidth, dbHeight);
-	ctx.fillStyle = "lightblue";
+	ctx.fillStyle = "white";
 	ctx.fill();
 	ctx.font = "16px arial";
 	ctx.fillStyle = "black";
-	ctx.fillText(txt, (canvas.width - txtWidth.width)/2, canvas.height/2); 
+
+	for (i = 0; i < txtArr.length; i++){
+		var txtWidth = ctx.measureText(txtArr[i]);
+		if(i == 0){
+			ctx.fillText(txtArr[i], (canvas.width/2 - txtWidth.width/2) , (canvas.height/2)-lineHeight); 
+		} else {
+			ctx.fillText(txtArr[i], (canvas.width/2 - txtWidth.width/2), (canvas.height/2)+lineHeight*i);
+		}
+	}
+
+	
+	
+	
 	ctx.closePath();
+	
+	document.addEventListener('keydown', restartGame, true);
 }
 
-var interval = setInterval(drawSnake, 200);
+function getRndInteger(min, max){
+	return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+function drawFood () {
+	//draw food on the screen 
+	//ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.beginPath();
+	ctx.rect(foodX, foodY, foodSize, foodSize); //x, y, width, height
+	ctx.fillStyle = "red";
+	ctx.fill();
+	ctx.closePath();
+	drawScore();
+}
+
+function randomFoodPos () {
+	var randFoodX = getRndInteger(foodSize,canvasWidth-foodSize);
+	var randFoodY = getRndInteger(foodSize,canvasHeight-foodSize);
+	foodX = Math.round(randFoodX/10) * 10;
+	foodY = Math.round(randFoodY/10) * 10;
+
+}
+
+function drawScore() {
+	ctx.font = "16px Arial";
+	ctx.fillStyle = "white";
+	ctx.fillText("Apples eaten: "+score, 8, 20);
+}
+
+randomFoodPos(); 
+
+
+
