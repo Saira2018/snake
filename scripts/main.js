@@ -101,7 +101,7 @@ function collisionDetection() {
 	if(snakeY == foodY && snakeX == foodX){
 		score++;
 		randomFoodPos();
-		
+		snakeHeight = snakeHeight + 10;
 	}
 }
 
