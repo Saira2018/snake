@@ -7,10 +7,24 @@ var canvasWidth = canvas.width;
 var snakeWidth = 10;
 var snakeHeight = 10;
 
-var snakeX = canvas.width/2;
-var snakeY = canvas.height-100;
-
 var snakeDirection = 'NORTH';
+
+var snake = {
+	body: [
+		{
+			x:canvas.width/2, 
+			y: canvas.height-100
+		},
+		{
+			x:canvas.width/2, 
+			y: canvas.height-110
+		},
+		{
+			x:canvas.width/2, 
+			y: canvas.height-120
+		}
+	]
+}
 
 var dx = 10;
 var dy = -10;
@@ -56,19 +70,27 @@ function moveSnake(e) {
 
 function startMove() {
 	if(snakeDirection == 'NORTH'){
-		snakeY += dy;
+		for(var i=0; i < snake.body.length; i++){
+			snake.body[i].y += dy;
+		}
 	}
 	
 	if(snakeDirection == 'EAST'){
-		snakeX += dx;
+		for(var i=0; i < snake.body.length; i++){
+			snake.body[i].x += dx;
+		}
 	}
 	
 	if(snakeDirection == 'SOUTH'){
-		snakeY  -= dy;
+		for(var i=0; i < snake.body.length; i++){
+			snake.body[i].y  -= dy;
+		}
 	}
 	
 	if(snakeDirection == 'WEST'){
-		snakeX -= dx;
+		for(var i=0; i < snake.body.length; i++){
+			snake.body[i].x -= dx;
+		}
 	}
 	
 }
@@ -77,7 +99,20 @@ function drawSnake(){
 	//draw start of snake
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
-	ctx.rect(snakeX, snakeY, snakeWidth, snakeHeight);
+	
+	//loop through snake body
+	//draw each snake body piece
+
+	console.log(snake.body.length);
+	
+	for(var i=0; i < snake.body.length; i++){
+		ctx.rect(snake.body[i].x, snake.body[i].y, snakeWidth, snakeHeight);
+		console.log("in for loop");
+	}
+	
+	//ctx.rect(snake.body[0].x, snake.body[0].y, snakeWidth, snakeHeight);
+	
+	
 	ctx.fillStyle = "yellow";
 	ctx.fill();
 	ctx.closePath();
@@ -92,16 +127,17 @@ function drawSnake(){
 
 
 function collisionDetection() {
-	if(snakeY + dy < 0 || snakeY + dy > canvas.height || snakeX + dx < 0 || snakeX + dx > canvas.width) { 
+	if(snake.body[0].y + dy < 0 || snake.body[0].y + dy > canvas.height || snake.body[0].x + dx < 0 || snake.body[0].x + dx > canvas.width) { 
 		document.removeEventListener('keydown', moveSnake, true);
 		clearInterval(interval);
 		gameOver();
 	}
 	
-	if(snakeY == foodY && snakeX == foodX){
+	if(snake.body[0].y == foodY && snake.body[0].x == foodX){
 		score++;
 		randomFoodPos();
-		snakeHeight = snakeHeight + 10;
+		//snakeHeight = snakeHeight + 10;
+		//snake.body.push({x:0, y:0});
 	}
 }
 
