@@ -13,15 +13,19 @@ var snake = {
 	body: [
 		{
 			x:canvas.width/2, 
-			y: canvas.height-100
+			y:canvas.height-100
 		},
 		{
 			x:canvas.width/2, 
-			y: canvas.height-110
+			y:canvas.height-110
 		},
 		{
 			x:canvas.width/2, 
-			y: canvas.height-120
+			y:canvas.height-120
+		},		
+		{
+			x:canvas.width/2, 
+			y:canvas.height-130
 		}
 	]
 }
@@ -69,50 +73,61 @@ function moveSnake(e) {
 }
 
 function startMove() {
+	
+	var snakeCopy = Object.assign({}, snake);
+	//var snakeCopy = snake.body.slice();
+	
 	if(snakeDirection == 'NORTH'){
-		for(var i=0; i < snake.body.length; i++){
-			snake.body[i].y += dy;
-		}
+		snake.body[0].y += dy;
 	}
 	
 	if(snakeDirection == 'EAST'){
-		for(var i=0; i < snake.body.length; i++){
-			snake.body[i].x += dx;
-		}
+		snake.body[0].x += dx;
 	}
 	
 	if(snakeDirection == 'SOUTH'){
-		for(var i=0; i < snake.body.length; i++){
-			snake.body[i].y  -= dy;
-		}
+		snake.body[0].y  -= dy;
 	}
 	
 	if(snakeDirection == 'WEST'){
-		for(var i=0; i < snake.body.length; i++){
-			snake.body[i].x -= dx;
-		}
+		snake.body[0].x -= dx;
 	}
 	
+	
+	for(i=1; i < snake.body.length; i++){
+		//set x and y coordinates to old parent x and y coordinates
+		snake.body[i].x = snakeCopy.body[i].x;
+		snake.body[i].y = snakeCopy.body[i].y;
+	}
+
+	console.log("original Snake HEAD ", snake.body[0]);
+	console.log("snakeCopy HEAD ", snakeCopy[0]);
+	console.log("-------------------------------------");
+	console.log("");
+	console.log(">>> original snake HEAD + 1", snake.body[1]);
+	console.log(">>> snakeCopy HEAD + 1", snakeCopy[1]);
+	console.log("::::::::::::::::::::::::::::::::::::::");
+	console.log("");
+	console.log(">>> original snake HEAD + 2", snake.body[2]);
+	console.log(">>> snakeCopy HEAD + 2", snakeCopy[2]);
+	console.log("::::::::::::::::::::::::::::::::::::::");
+	console.log("");
+	console.log(">>> original snake HEAD + 3", snake.body[3]);
+	console.log(">>> snakeCopy HEAD + 3", snakeCopy[3]);
+	console.log("::::::::::::::::::::::::::::::::::::::");
+	console.log("");
 }
+
 
 function drawSnake(){
 	//draw start of snake
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	
-	//loop through snake body
-	//draw each snake body piece
-
-	console.log(snake.body.length);
-	
 	for(var i=0; i < snake.body.length; i++){
 		ctx.rect(snake.body[i].x, snake.body[i].y, snakeWidth, snakeHeight);
-		console.log("in for loop");
 	}
-	
-	//ctx.rect(snake.body[0].x, snake.body[0].y, snakeWidth, snakeHeight);
-	
-	
+		
 	ctx.fillStyle = "yellow";
 	ctx.fill();
 	ctx.closePath();
@@ -137,7 +152,7 @@ function collisionDetection() {
 		score++;
 		randomFoodPos();
 		//snakeHeight = snakeHeight + 10;
-		//snake.body.push({x:0, y:0});
+	//snake.body.push({x:0, y:0});
 	}
 }
 
