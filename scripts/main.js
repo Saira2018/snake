@@ -74,8 +74,10 @@ function moveSnake(e) {
 
 function startMove() {
 	
-	var snakeCopy = Object.assign({}, snake);
+	//var snakeCopy = Object.assign({}, snake);
 	//var snakeCopy = snake.body.slice();
+	var snakeCopy = JSON.parse(JSON.stringify(snake.body));
+	
 	
 	if(snakeDirection == 'NORTH'){
 		snake.body[0].y += dy;
@@ -96,26 +98,22 @@ function startMove() {
 	
 	for(i=1; i < snake.body.length; i++){
 		//set x and y coordinates to old parent x and y coordinates
-		snake.body[i].x = snakeCopy.body[i].x;
-		snake.body[i].y = snakeCopy.body[i].y;
+		snake.body[i].y = snakeCopy[i].y;
+		snake.body[i].x = snakeCopy[i].x;
 	}
+	
+	 
+	/* I WANT TO DO THIS... BUT CAN'T WORK OUT HOW WITH THE FOR LOOP ABOVE?! 
+	snake.body[1].y = snakeCopy[0].y;
+	snake.body[1].x = snakeCopy[0].x;
+	
+	snake.body[2].y = snakeCopy[1].y;
+	snake.body[2].x = snakeCopy[1].x;	
+	
+	snake.body[3].y = snakeCopy[2].y;
+	snake.body[3].x = snakeCopy[2].x;
+	*/
 
-	console.log("original Snake HEAD ", snake.body[0]);
-	console.log("snakeCopy HEAD ", snakeCopy[0]);
-	console.log("-------------------------------------");
-	console.log("");
-	console.log(">>> original snake HEAD + 1", snake.body[1]);
-	console.log(">>> snakeCopy HEAD + 1", snakeCopy[1]);
-	console.log("::::::::::::::::::::::::::::::::::::::");
-	console.log("");
-	console.log(">>> original snake HEAD + 2", snake.body[2]);
-	console.log(">>> snakeCopy HEAD + 2", snakeCopy[2]);
-	console.log("::::::::::::::::::::::::::::::::::::::");
-	console.log("");
-	console.log(">>> original snake HEAD + 3", snake.body[3]);
-	console.log(">>> snakeCopy HEAD + 3", snakeCopy[3]);
-	console.log("::::::::::::::::::::::::::::::::::::::");
-	console.log("");
 }
 
 
