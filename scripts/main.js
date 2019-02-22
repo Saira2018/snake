@@ -126,18 +126,22 @@ function startMove() {
 function drawSnake(){
 	//draw start of snake
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.beginPath();
+
 	
 	for(var i=0; i < snake.body.length; i++){
+		ctx.beginPath();
+		ctx.fillStyle = "purple";
+		ctx.strokeStyle = "white";
 		ctx.strokeRect(snake.body[i].x, snake.body[i].y, snakeWidth, snakeHeight);
 		ctx.rect(snake.body[i].x, snake.body[i].y, snakeWidth, snakeHeight);
+		ctx.lineWidth = 1.5;	
+		ctx.fill();
+		ctx.closePath();
 		
 	}
-	ctx.fillStyle = "purple";
-	ctx.strokeStyle = "white";
-	ctx.lineWidth = 2;	
-	ctx.fill();
-	ctx.closePath();
+
+
+
 	
 	startMove();
 	drawFood();
@@ -208,10 +212,10 @@ function getRndInteger(min, max){
 function drawFood () {
 	//draw food on the screen 
 	ctx.beginPath();
-	ctx.rect(foodX, foodY, foodSize, foodSize); 
-	ctx.strokeRect(foodX, foodY, foodSize, foodSize);
 	ctx.fillStyle = "red";
-	ctx.strokeStyle = "yellow";
+	ctx.strokeStyle = "yellow";	
+	ctx.strokeRect(foodX, foodY, foodSize, foodSize);
+	ctx.rect(foodX, foodY, foodSize, foodSize); 
 	ctx.fill();
 	ctx.closePath();
 	drawScore();
