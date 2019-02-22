@@ -7,7 +7,12 @@ var canvasWidth = canvas.width;
 var snakeWidth = 10;
 var snakeHeight = 10;
 
-var snakeDirection = 'NORTH';
+var snakeDirection = 'UP';
+
+var goingLeft = false;
+var goingRight = false;
+var goingUp = true;
+var goingDown = false;
 
 var snake = {
 	body: [
@@ -28,7 +33,7 @@ var snake = {
 			y:canvas.height-130
 		}
 	]
-}
+};
 
 var dx = 10;
 var dy = -10;
@@ -56,66 +61,67 @@ function restartGame(e){
 
 function moveSnake(e) {
 
-	if(e.keyCode == 37) {
-		snakeDirection = 'WEST';
+	if(e.keyCode == 37 && !goingRight) {
+		snakeDirection = 'LEFT';
 	}
 
-	if(e.keyCode == 38){
-		snakeDirection = 'NORTH';
+	if(e.keyCode == 38 && !goingDown){
+		snakeDirection = 'UP';
 	}
-	if(e.keyCode == 39) {
-		snakeDirection = 'EAST';
+	if(e.keyCode == 39 && !goingLeft) {
+		snakeDirection = 'RIGHT';
 	}			
-	if(e.keyCode == 40) {
-		snakeDirection = 'SOUTH';
+	if(e.keyCode == 40 && !goingUp) {
+		snakeDirection = 'DOWN';
 	}		
 
 }
 
 function startMove() {
 	
-	//var snakeCopy = Object.assign({}, snake);
-	//var snakeCopy = snake.body.slice();
-	var snakeCopy = JSON.parse(JSON.stringify(snake.body));
+	var snakeCopy = JSON.parse(JSON.stringify(snake));
 	
-	
-	if(snakeDirection == 'NORTH'){
+	if(snakeDirection == 'UP'){
 		snake.body[0].y += dy;
+		goingRight = false;
+		goingUp = true;
+		goingDown = false;
+		goingLeft = false;
 	}
 	
-	if(snakeDirection == 'EAST'){
+	if(snakeDirection == 'RIGHT'){
 		snake.body[0].x += dx;
+		goingRight = true;
+		goingUp = false;
+		goingDown = false;
+		goingLeft = false;
 	}
 	
-	if(snakeDirection == 'SOUTH'){
+	if(snakeDirection == 'DOWN'){
 		snake.body[0].y  -= dy;
+		goingRight = false;
+		goingUp = false;
+		goingDown = true;
+		goingLeft = false;
 	}
 	
-	if(snakeDirection == 'WEST'){
+	if(snakeDirection == 'LEFT'){
 		snake.body[0].x -= dx;
+		goingRight = false;
+		goingUp = false;
+		goingDown = false;
+		goingLeft = true;
 	}
 	
 	
 	for(i=1; i < snake.body.length; i++){
 		//set x and y coordinates to old parent x and y coordinates
-		snake.body[i].y = snakeCopy[i].y;
-		snake.body[i].x = snakeCopy[i].x;
+		snake.body[i].y = snakeCopy.body[i-1].y;
+		snake.body[i].x = snakeCopy.body[i-1].x;
 	}
 	
 	 
-	/* I WANT TO DO THIS... BUT CAN'T WORK OUT HOW WITH THE FOR LOOP ABOVE?! 
-	snake.body[1].y = snakeCopy[0].y;
-	snake.body[1].x = snakeCopy[0].x;
-	
-	snake.body[2].y = snakeCopy[1].y;
-	snake.body[2].x = snakeCopy[1].x;	
-	
-	snake.body[3].y = snakeCopy[2].y;
-	snake.body[3].x = snakeCopy[2].x;
-	*/
-
 }
-
 
 function drawSnake(){
 	//draw start of snake
@@ -123,24 +129,26 @@ function drawSnake(){
 	ctx.beginPath();
 	
 	for(var i=0; i < snake.body.length; i++){
+		ctx.strokeRect(snake.body[i].x, snake.body[i].y, snakeWidth, snakeHeight);
 		ctx.rect(snake.body[i].x, snake.body[i].y, snakeWidth, snakeHeight);
-	}
 		
-	ctx.fillStyle = "yellow";
+	}
+	ctx.fillStyle = "purple";
+	ctx.strokeStyle = "white";
+	ctx.lineWidth = 2;	
 	ctx.fill();
 	ctx.closePath();
 	
 	startMove();
 	drawFood();
-	collisionDetection();
-	
+	collisionDetection();	
 }
 
 
 
 
 function collisionDetection() {
-	if(snake.body[0].y + dy < 0 || snake.body[0].y + dy > canvas.height || snake.body[0].x + dx < 0 || snake.body[0].x + dx > canvas.width) { 
+	if(snake.body[0].y  < 0 - snakeHeight || snake.body[0].y > canvas.height || snake.body[0].x < 0 - snakeHeight|| snake.body[0].x > canvas.width) { 
 		document.removeEventListener('keydown', moveSnake, true);
 		clearInterval(interval);
 		gameOver();
@@ -149,9 +157,19 @@ function collisionDetection() {
 	if(snake.body[0].y == foodY && snake.body[0].x == foodX){
 		score++;
 		randomFoodPos();
-		//snakeHeight = snakeHeight + 10;
-	//snake.body.push({x:0, y:0});
+		snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
 	}
+	
+	for(var i = 1; i < snake.body.length; i++){
+		if(snake.body[0].x === snake.body[i].x && snake.body[0].y === snake.body[i].y ){
+			console.log("HIT ITSELF");
+			
+			//clearInterval(interval);
+			//gameOver();
+		}
+	}
+
+	
 }
 
 function gameOver() {
@@ -166,7 +184,7 @@ function gameOver() {
 	ctx.font = "16px arial";
 	ctx.fillStyle = "black";
 
-	for (i = 0; i < txtArr.length; i++){
+	for (var i = 0; i < txtArr.length; i++){
 		var txtWidth = ctx.measureText(txtArr[i]);
 		if(i == 0){
 			ctx.fillText(txtArr[i], (canvas.width/2 - txtWidth.width/2) , (canvas.height/2)-lineHeight); 
@@ -189,10 +207,11 @@ function getRndInteger(min, max){
 
 function drawFood () {
 	//draw food on the screen 
-	//ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
-	ctx.rect(foodX, foodY, foodSize, foodSize); //x, y, width, height
+	ctx.rect(foodX, foodY, foodSize, foodSize); 
+	ctx.strokeRect(foodX, foodY, foodSize, foodSize);
 	ctx.fillStyle = "red";
+	ctx.strokeStyle = "yellow";
 	ctx.fill();
 	ctx.closePath();
 	drawScore();
@@ -203,6 +222,14 @@ function randomFoodPos () {
 	var randFoodY = getRndInteger(foodSize,canvasHeight-foodSize);
 	foodX = Math.round(randFoodX/10) * 10;
 	foodY = Math.round(randFoodY/10) * 10;
+	
+	for(var i = 0; i < snake.body.length; i++){
+		var foodInSnakePos = snake.body[i].x == foodX && snake.body[i].y == foodY;
+		if(foodInSnakePos){
+			randomFoodPos();
+			console.log("re-generate food");
+		} 
+	}
 
 }
 
