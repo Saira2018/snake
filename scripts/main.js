@@ -18,19 +18,19 @@ var snake = {
 	body: [
 		{
 			x:canvas.width/2, 
-			y:canvas.height-100
-		},
-		{
-			x:canvas.width/2, 
-			y:canvas.height-110
+			y:canvas.height-130
 		},
 		{
 			x:canvas.width/2, 
 			y:canvas.height-120
+		},
+		{
+			x:canvas.width/2, 
+			y:canvas.height-110
 		},		
 		{
 			x:canvas.width/2, 
-			y:canvas.height-130
+			y:canvas.height-100
 		}
 	]
 };
@@ -152,7 +152,7 @@ function drawSnake(){
 
 
 function collisionDetection() {
-	if(snake.body[0].y  < 0 - snakeHeight || snake.body[0].y > canvas.height || snake.body[0].x < 0 - snakeHeight|| snake.body[0].x > canvas.width) { 
+	if(snake.body[0].y  < 0 || snake.body[0].y > (canvas.height - snakeHeight) || snake.body[0].x < 0 || snake.body[0].x > ( canvas.width - snakeHeight)) { 
 		document.removeEventListener('keydown', moveSnake, true);
 		clearInterval(interval);
 		gameOver();
@@ -168,8 +168,8 @@ function collisionDetection() {
 		if(snake.body[0].x === snake.body[i].x && snake.body[0].y === snake.body[i].y ){
 			console.log("HIT ITSELF");
 			
-			//clearInterval(interval);
-			//gameOver();
+			clearInterval(interval);
+			gameOver();
 		}
 	}
 
@@ -180,7 +180,7 @@ function gameOver() {
 	var txtArr = ["Game Over!", "Press the r key to restart.","You managed to eat "+score+" apples."];
 	var lineHeight = 18;
 
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	//ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	ctx.rect((canvas.width-dbWidth)/2, (canvas.height-dbHeight)/2, dbWidth, dbHeight);
 	ctx.fillStyle = "white";
