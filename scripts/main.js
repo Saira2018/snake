@@ -1,3 +1,5 @@
+const DEBUG = false;
+
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
 
@@ -49,7 +51,8 @@ var dbHeight = (dbWidth/aspectRatio);
 
 var score = 0;
 
-var interval = setInterval(drawSnake, 200);
+var interval = setInterval(drawSnake, DEBUG ? 400 : 200);
+
 document.addEventListener('keydown', moveSnake, true);
 
 function restartGame(e){
@@ -121,6 +124,9 @@ function startMove() {
 	}
 	
 	 
+//	console.log("snake last X: ", snake.body[snake.body.length-1].x);
+//	console.log("snake head X: ", snake.body[0]);
+	
 }
 
 function drawSnake(){
@@ -161,7 +167,7 @@ function collisionDetection() {
 	if(snake.body[0].y == foodY && snake.body[0].x == foodX){
 		score++;
 		randomFoodPos();
-		snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
+		addTailPiece();
 	}
 	
 	for(var i = 1; i < snake.body.length; i++){
@@ -172,9 +178,51 @@ function collisionDetection() {
 			gameOver();
 		}
 	}
-
-	
 }
+
+function addTailPiece(){
+	var lastY = snake.body[snake.body.length - 1].y;
+	var headY = snake.body[0].y;	
+	var lastX = snake.body[snake.body.length - 1].x;
+	var headX = snake.body[0].x;
+	
+	if(snakeDirection == 'DOWN'){
+		if(lastX !== headX){
+			console.log("body moving DIFFERENT direction to head");
+			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
+		} else {
+			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y - 10});
+		}
+	}	
+	
+	if(snakeDirection == 'UP'){
+		if(lastX !== headX){
+			console.log("body moving DIFFERENT direction to head");
+			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
+		} else {
+			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y + 10});
+		}
+	}
+	
+	if(snakeDirection == 'LEFT'){
+		if(lastY !== headY){
+			console.log("body moving DIFFERENT direction to head");
+			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
+		} else {
+			snake.body.push({x:snake.body[snake.body.length-1].x + 10, y:snake.body[snake.body.length-1].y});
+		}
+	}	
+	
+	if(snakeDirection == 'RIGHT'){
+		if(lastY !== headY){
+			console.log("body moving DIFFERENT direction to head");
+			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
+		} else {
+			snake.body.push({x:snake.body[snake.body.length-1].x - 10, y:snake.body[snake.body.length-1].y});
+		}
+	}	
+}
+
 
 function gameOver() {
 	var txtArr = ["Game Over!", "Press the r key to restart.","You managed to eat "+score+" apples."];
@@ -243,7 +291,14 @@ function drawScore() {
 	ctx.fillText("Apples eaten: "+score, 8, 20);
 }
 
-randomFoodPos(); 
+if(DEBUG === false) {
+	randomFoodPos(); 	
+} else {
+	foodX = snake.body[0].x;
+	foodY = snake.body[0].y - 80;
+}
+
+
 
 
 
