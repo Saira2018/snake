@@ -48,7 +48,6 @@ var aspectRatio = (canvas.width/canvas.height);
 var dbWidth = 250;
 var dbHeight = (dbWidth/aspectRatio);
 
-
 var score = 0;
 
 var interval = setInterval(drawSnake, DEBUG ? 400 : 200);
@@ -82,10 +81,15 @@ function moveSnake(e) {
 
 function startMove() {
 	
+	var newSnakeHead = {
+		x:snake.body[0].x,
+		y:snake.body[0].y
+	}
+	
 	var snakeCopy = JSON.parse(JSON.stringify(snake));
 	
 	if(snakeDirection == 'UP'){
-		snake.body[0].y += dy;
+		newSnakeHead.y += dy;
 		goingRight = false;
 		goingUp = true;
 		goingDown = false;
@@ -93,7 +97,7 @@ function startMove() {
 	}
 	
 	if(snakeDirection == 'RIGHT'){
-		snake.body[0].x += dx;
+		newSnakeHead.x += dx;
 		goingRight = true;
 		goingUp = false;
 		goingDown = false;
@@ -101,7 +105,7 @@ function startMove() {
 	}
 	
 	if(snakeDirection == 'DOWN'){
-		snake.body[0].y  -= dy;
+		newSnakeHead.y  -= dy;
 		goingRight = false;
 		goingUp = false;
 		goingDown = true;
@@ -109,31 +113,28 @@ function startMove() {
 	}
 	
 	if(snakeDirection == 'LEFT'){
-		snake.body[0].x -= dx;
+		newSnakeHead.x -= dx;
 		goingRight = false;
 		goingUp = false;
 		goingDown = false;
 		goingLeft = true;
 	}
 	
-	
-	for(i=1; i < snake.body.length; i++){
-		//set x and y coordinates to old parent x and y coordinates
-		snake.body[i].y = snakeCopy.body[i-1].y;
-		snake.body[i].x = snakeCopy.body[i-1].x;
-	}
-	
-	 
-//	console.log("snake last X: ", snake.body[snake.body.length-1].x);
-//	console.log("snake head X: ", snake.body[0]);
-	
+	// if new snake head is eating food
+	if(newSnakeHead.y == foodY && newSnakeHead.x == foodX){
+		snake.body.unshift(newSnakeHead);
+	} else{
+		snake.body[0] = newSnakeHead;
+		for(i=1; i < snake.body.length; i++){
+			//set x and y coordinates to old parent x and y coordinates
+			snake.body[i].y = snakeCopy.body[i-1].y;
+			snake.body[i].x = snakeCopy.body[i-1].x;
+		}
+   }
 }
 
 function drawSnake(){
-	//draw start of snake
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	
 	for(var i=0; i < snake.body.length; i++){
 		ctx.beginPath();
 		ctx.fillStyle = "purple";
@@ -143,19 +144,11 @@ function drawSnake(){
 		ctx.lineWidth = 1.5;	
 		ctx.fill();
 		ctx.closePath();
-		
 	}
-
-
-
-	
 	startMove();
 	drawFood();
 	collisionDetection();	
 }
-
-
-
 
 function collisionDetection() {
 	if(snake.body[0].y  < 0 || snake.body[0].y > (canvas.height - snakeHeight) || snake.body[0].x < 0 || snake.body[0].x > ( canvas.width - snakeHeight)) { 
@@ -167,73 +160,27 @@ function collisionDetection() {
 	if(snake.body[0].y == foodY && snake.body[0].x == foodX){
 		score++;
 		randomFoodPos();
-		addTailPiece();
 	}
 	
 	for(var i = 1; i < snake.body.length; i++){
 		if(snake.body[0].x === snake.body[i].x && snake.body[0].y === snake.body[i].y ){
 			console.log("HIT ITSELF");
-			
 			clearInterval(interval);
 			gameOver();
 		}
 	}
 }
 
-function addTailPiece(){
-	var lastY = snake.body[snake.body.length - 1].y;
-	var headY = snake.body[0].y;	
-	var lastX = snake.body[snake.body.length - 1].x;
-	var headX = snake.body[0].x;
-	
-	if(snakeDirection == 'DOWN'){
-		if(lastX !== headX){
-			console.log("body moving DIFFERENT direction to head");
-			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
-		} else {
-			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y - 10});
-		}
-	}	
-	
-	if(snakeDirection == 'UP'){
-		if(lastX !== headX){
-			console.log("body moving DIFFERENT direction to head");
-			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
-		} else {
-			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y + 10});
-		}
-	}
-	
-	if(snakeDirection == 'LEFT'){
-		if(lastY !== headY){
-			console.log("body moving DIFFERENT direction to head");
-			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
-		} else {
-			snake.body.push({x:snake.body[snake.body.length-1].x + 10, y:snake.body[snake.body.length-1].y});
-		}
-	}	
-	
-	if(snakeDirection == 'RIGHT'){
-		if(lastY !== headY){
-			console.log("body moving DIFFERENT direction to head");
-			snake.body.push({x:snake.body[snake.body.length-1].x, y:snake.body[snake.body.length-1].y});
-		} else {
-			snake.body.push({x:snake.body[snake.body.length-1].x - 10, y:snake.body[snake.body.length-1].y});
-		}
-	}	
-}
-
 
 function gameOver() {
-	var txtArr = ["Game Over!", "Press the r key to restart.","You managed to eat "+score+" apples."];
+	
+	var txtArr = score == 1 ? ["Game Over!", "Press the r key to restart.","You managed to eat "+score+" apple."] : ["Game Over!", "Press the r key to restart.","You managed to eat "+score+" apples."];
 	var lineHeight = 18;
-
-	//ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 	ctx.rect((canvas.width-dbWidth)/2, (canvas.height-dbHeight)/2, dbWidth, dbHeight);
 	ctx.fillStyle = "white";
 	ctx.fill();
-	ctx.font = "16px arial";
+	ctx.font = "16px 'Roboto'";
 	ctx.fillStyle = "black";
 
 	for (var i = 0; i < txtArr.length; i++){
@@ -245,11 +192,7 @@ function gameOver() {
 		}
 	}
 
-	
-	
-	
 	ctx.closePath();
-	
 	document.addEventListener('keydown', restartGame, true);
 }
 
@@ -282,13 +225,10 @@ function randomFoodPos () {
 			console.log("re-generate food");
 		} 
 	}
-
 }
 
 function drawScore() {
-	ctx.font = "16px Arial";
-	ctx.fillStyle = "white";
-	ctx.fillText("Apples eaten: "+score, 8, 20);
+	document.getElementById("appleCount").innerHTML = "Apples eaten: " + score;
 }
 
 if(DEBUG === false) {

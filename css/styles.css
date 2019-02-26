@@ -3,6 +3,9 @@
 	padding:0; 
 	margin:0;
 }
+body, canvas {
+	font-family: 'Roboto', sans-serif;
+}
 
 canvas {
 	background: green;
@@ -10,3 +13,9 @@ canvas {
 	margin: 0 auto;
 }
 
+#appleCount {
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 2rem;
+	font-weight: bold;
+}
