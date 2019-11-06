@@ -7,4 +7,4 @@ This project was created as a way to use javascript in making a simple game usin
 
 ## Demo
 
-A desktop demo can be found here: [Snake Demo](https://www.sc-productions.co.uk "Snake Demo")
+A desktop demo can be found here: [Snake Demo](https://www.sc-productions.co.uk/snake/index.html "Snake Demo")
